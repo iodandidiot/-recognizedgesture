@@ -8,6 +8,8 @@ public class Template : MonoBehaviour
     Vector2[] position;
     public GameObject checkSprite;
     Vector2 centrMass;
+    Vector2 poligonCentreMass;
+    Rigidbody2D rgbody;
     // Use this for initialization
     void Start()
     {
@@ -18,17 +20,12 @@ public class Template : MonoBehaviour
         line.SetPosition(2, new Vector3(1, -1, 0));
         line.SetPosition(3, new Vector3(-1, -1, 0));
         line.SetPosition(4, new Vector3(-1, 1, 0));
-        position = new Vector2[10];
+        position = new Vector2[5];
         position[0] = new Vector2(-1, 1);
         position[1] = new Vector2(1, 1);
         position[2] = new Vector2(1, -1);
         position[3] = new Vector2(-1, -1);
         position[4] = new Vector2(-1, 1);
-        position[5] = new Vector2(-1.1f, 1.1f);
-        position[6] = new Vector2(1.1f, 1.1f);
-        position[7] = new Vector2(1.1f, -1.1f);
-        position[8] = new Vector2(-1.1f, -1.1f);
-        position[9] = new Vector2(-1.1f, 1.1f);
         coll = gameObject.AddComponent<PolygonCollider2D>();
 
         //ollgameObject.GetComponent<PolygonCollider2D>().SetPath(0, position);
@@ -51,37 +48,53 @@ public class Template : MonoBehaviour
         float checkPosX = position[0].x - Array[0].x;
         float checkPosY = position[0].y - Array[0].y;
         PolygonCollider2D cSC = checkSprite.gameObject.AddComponent<PolygonCollider2D>();
-        //for (int i = 0; i < Array.Length; i++)
-        //{
-        //    Array[i].x += checkPosX-1;
-        //    Array[i].y += checkPosY-1;
-        //}
         cSC.SetPath(0, Array);
-        //Rigidbody2D __spriteRigidbody = checkSprite.gameObject.AddComponent<Rigidbody2D>();
-        //__spriteRigidbody.isKinematic = true;
-        //__spriteRigidbody.centerOfMass = centrMass;
-        Vector2 poligonCentreMass = cSC.bounds.center;
+        poligonCentreMass = cSC.bounds.center;
         Vector2 chengePos=poligonCentreMass - centrMass;
         print(cSC.bounds.size);
         
         for (int i = 0; i < Array.Length; i++)
         {
             Array[i] -= chengePos;
-
         }
 
         cSC.SetPath(0, Array);
         checkSprite.gameObject.transform.localScale = new Vector2((coll.bounds.size.x / cSC.bounds.size.x+coll.bounds.size.y / cSC.bounds.size.y)/2,
         (coll.bounds.size.x / cSC.bounds.size.x+coll.bounds.size.y / cSC.bounds.size.y)/2);
         print(cSC.bounds.size);
-        int count = 0;
-        for (int i = 0; i < Array.Length; i++)
+        checkPoints(Array.Length);
+
+        //int count = 0;
+        //for (int i = 0; i < Array.Length; i++)
+        //{
+        //    if (coll.OverlapPoint(Array[i]))
+        //    {
+        //        count += 1;
+        //    }
+        //}
+        //print(count);
+        //cSC.isTrigger = true;
+        //coll.isTrigger = true;
+        //rgbody = gameObject.AddComponent<Rigidbody2D>();
+        //rgbody.gravityScale = 0;
+        //Rigidbody2D __rg2= cSC.gameObject.AddComponent<Rigidbody2D>();
+        //__rg2.gravityScale = 0;
+
+    }
+
+
+    void checkPoints(int reyCount)
+    {
+        float _x=0;
+        float _y=0;
+        float Angle = 360 * Mathf.Deg2Rad;
+        for (int i = 0; i < reyCount; i++)
         {
-            if (coll.bounds.ClosestPoint(cSC.points[i]).x == cSC.points[i].x && coll.bounds.ClosestPoint(cSC.points[i]).y == cSC.points[i].y)
-            {
-                count += 1;
-            }
+            _x = Mathf.Cos(Angle / reyCount * i)*10;
+            _y = Mathf.Cos(Angle / reyCount * i)*10;
+            print(new Vector2(_x, _y));
+            RaycastHit2D hit = Physics2D.Raycast(poligonCentreMass,new Vector2(_x,_y));
+            print(hit.collider.name);
         }
-        print(count);
     }
 }
