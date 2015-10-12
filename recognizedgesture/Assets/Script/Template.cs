@@ -13,27 +13,28 @@ public class Template : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        line = transform.GetComponent<LineRenderer>();
-        line.SetVertexCount(5);
-        line.SetPosition(0, new Vector3(-1, 1, 0));
-        line.SetPosition(1, new Vector3(1, 1, 0));
-        line.SetPosition(2, new Vector3(1, -1, 0));
-        line.SetPosition(3, new Vector3(-1, -1, 0));
-        line.SetPosition(4, new Vector3(-1, 1, 0));
-        position = new Vector2[5];
-        position[0] = new Vector2(-1, 1);
-        position[1] = new Vector2(1, 1);
-        position[2] = new Vector2(1, -1);
-        position[3] = new Vector2(-1, -1);
-        position[4] = new Vector2(-1, 1);
-        coll = gameObject.AddComponent<PolygonCollider2D>();
-
-        //ollgameObject.GetComponent<PolygonCollider2D>().SetPath(0, position);
-        coll.SetPath(0, position);
-        //Rigidbody2D __rigidbody = gameObject.AddComponent<Rigidbody2D>();
-        //__rigidbody.isKinematic = true;
-        //centrMass = __rigidbody.worldCenterOfMass;
-        centrMass = coll.bounds.center;
+        //line = transform.GetComponent<LineRenderer>();
+        //line.SetVertexCount(5);
+        //line.SetPosition(0, new Vector3(-1, 1, 0));
+        //line.SetPosition(1, new Vector3(1, 1, 0));
+        //line.SetPosition(2, new Vector3(1, -1, 0));
+        //line.SetPosition(3, new Vector3(-1, -1, 0));
+        //line.SetPosition(4, new Vector3(-1, 1, 0));        
+        //position = new Vector2[10];
+        //position[0] = new Vector2(-0.7f, 0.7f);
+        //position[1] = new Vector2(0.7f, 0.7f);
+        //position[2] = new Vector2(0.7f, -0.7f);
+        //position[3] = new Vector2(-0.7f, -0.7f);
+        //position[4] = new Vector2(-0.7f, 0.7f);
+        //position[5] = new Vector2(-1.3f, 1.3f);
+        //position[6] = new Vector2(1.3f, 1.3f);
+        //position[7] = new Vector2(1.3f, -1.3f);
+        //position[8] = new Vector2(-1.3f, -1.3f);
+        //position[9] = new Vector2(-1.3f, 1.3f);
+        //coll = gameObject.AddComponent<PolygonCollider2D>();
+        //coll.SetPath(0, position);        
+        //centrMass = coll.bounds.center;
+        startFigur(5);
     }
 
     // Update is called once per frame
@@ -61,24 +62,21 @@ public class Template : MonoBehaviour
         cSC.SetPath(0, Array);
         checkSprite.gameObject.transform.localScale = new Vector2((coll.bounds.size.x / cSC.bounds.size.x+coll.bounds.size.y / cSC.bounds.size.y)/2,
         (coll.bounds.size.x / cSC.bounds.size.x+coll.bounds.size.y / cSC.bounds.size.y)/2);
+        print(coll.bounds.size);
         print(cSC.bounds.size);
-        checkPoints(Array.Length);
+        //checkPoints(Array.Length);
 
-        //int count = 0;
-        //for (int i = 0; i < Array.Length; i++)
-        //{
-        //    if (coll.OverlapPoint(Array[i]))
-        //    {
-        //        count += 1;
-        //    }
-        //}
-        //print(count);
-        //cSC.isTrigger = true;
-        //coll.isTrigger = true;
-        //rgbody = gameObject.AddComponent<Rigidbody2D>();
-        //rgbody.gravityScale = 0;
-        //Rigidbody2D __rg2= cSC.gameObject.AddComponent<Rigidbody2D>();
-        //__rg2.gravityScale = 0;
+        int count = 0;
+        for (int i = 0; i < Array.Length; i++)
+        {
+            if (coll.OverlapPoint(Array[i]))
+            {
+                //print(Array[i]);
+                count += 1;
+            }
+        }
+        print(count);
+        
 
     }
 
@@ -93,8 +91,35 @@ public class Template : MonoBehaviour
             _x = Mathf.Cos(Angle / reyCount * i)*10;
             _y = Mathf.Cos(Angle / reyCount * i)*10;
             print(new Vector2(_x, _y));
-            RaycastHit2D hit = Physics2D.Raycast(poligonCentreMass,new Vector2(_x,_y));
+            RaycastHit2D hit = Physics2D.Raycast(centrMass, new Vector2(_x, _y));
             print(hit.collider.name);
+            CheckDistance(hit.point, _x, _y);
         }
+    }
+
+    float CheckDistance(Vector2 hintpos,float _x,float _y)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(centrMass, new Vector2(_x, _y));
+        print(hit.collider.name);
+        return hit.distance;
+    }
+    void startFigur(int kolStor)
+    {
+        float Angle=360;
+        Angle = Angle * Mathf.Deg2Rad;
+        float checkAngle=Angle/kolStor;
+        //PolygonCollider2D poligon = gameObject.AddComponent<PolygonCollider2D>();
+        Vector2 [] poligonPoints=new Vector2[kolStor+1];
+        line = transform.GetComponent<LineRenderer>();
+        line.SetVertexCount(kolStor+1);
+        for (int i = 0; i < kolStor; i++)
+        {
+            poligonPoints[i] = new Vector2(Mathf.Cos(checkAngle * i), Mathf.Sin(checkAngle * i));
+            line.SetPosition(i, new Vector3(Mathf.Cos(checkAngle * i), Mathf.Sin(checkAngle * i), 0));
+        }
+
+        line.SetPosition(kolStor,poligonPoints[0]);
+
+        
     }
 }
