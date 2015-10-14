@@ -4,7 +4,8 @@ using System.Collections;
 public class Template : MonoBehaviour
 {
     LineRenderer line;//визуализация заданного полигона
-    PolygonCollider2D coll;//заданный полигон
+    //PolygonCollider2D coll;//заданный полигон
+    EdgeCollider2D coll;
     PolygonCollider2D cell;
     Vector2[] position;
     public GameObject checkSprite;
@@ -12,30 +13,11 @@ public class Template : MonoBehaviour
     Vector2 poligonCentreMass;
     Rigidbody2D rgbody;
     public int countPolig=3;
+    public GameObject hitPoint;
+    public GameObject reyObj;
     // Use this for initialization
     void Start()
-    {
-        //line = transform.GetComponent<LineRenderer>();
-        //line.SetVertexCount(5);
-        //line.SetPosition(0, new Vector3(-1, 1, 0));
-        //line.SetPosition(1, new Vector3(1, 1, 0));
-        //line.SetPosition(2, new Vector3(1, -1, 0));
-        //line.SetPosition(3, new Vector3(-1, -1, 0));
-        //line.SetPosition(4, new Vector3(-1, 1, 0));        
-        //position = new Vector2[10];
-        //position[0] = new Vector2(-0.7f, 0.7f);
-        //position[1] = new Vector2(0.7f, 0.7f);
-        //position[2] = new Vector2(0.7f, -0.7f);
-        //position[3] = new Vector2(-0.7f, -0.7f);
-        //position[4] = new Vector2(-0.7f, 0.7f);
-        //position[5] = new Vector2(-1.3f, 1.3f);
-        //position[6] = new Vector2(1.3f, 1.3f);
-        //position[7] = new Vector2(1.3f, -1.3f);
-        //position[8] = new Vector2(-1.3f, -1.3f);
-        //position[9] = new Vector2(-1.3f, 1.3f);
-        //coll = gameObject.AddComponent<PolygonCollider2D>();
-        //coll.SetPath(0, position);        
-        //centrMass = coll.bounds.center;
+    {        
         startFigur(countPolig);
     }
 
@@ -50,64 +32,86 @@ public class Template : MonoBehaviour
     {
         float checkPosX = position[0].x - Array[0].x;
         float checkPosY = position[0].y - Array[0].y;
-        PolygonCollider2D cSC = checkSprite.gameObject.AddComponent<PolygonCollider2D>();
-        cSC.SetPath(0, Array);
+        //PolygonCollider2D cSC = checkSprite.gameObject.AddComponent<PolygonCollider2D>();        
+        //cSC.SetPath(0, Array);
+        EdgeCollider2D cSC = checkSprite.gameObject.AddComponent<EdgeCollider2D>();
+        cSC.points = Array;
         poligonCentreMass = cSC.bounds.center;
-        Vector2 chengePos=poligonCentreMass - centrMass;
-        print(cSC.bounds.size);
-        
+        print(poligonCentreMass);
+        print(centrMass);
+        Vector2 chengePos=poligonCentreMass - centrMass;        
         for (int i = 0; i < Array.Length; i++)
         {
             Array[i] -= chengePos;
         }
 
-        cSC.SetPath(0, Array);
+        //cSC.SetPath(0, Array);
+        cSC.points = Array;
         checkSprite.gameObject.transform.localScale = new Vector2((coll.bounds.size.x / cSC.bounds.size.x+coll.bounds.size.y / cSC.bounds.size.y)/2,
         (coll.bounds.size.x / cSC.bounds.size.x+coll.bounds.size.y / cSC.bounds.size.y)/2);
-        print(coll.bounds.size);
-        print(cSC.bounds.size);
         //checkPoints(Array.Length);
-
-        int count = 0;
-        for (int i = 0; i < Array.Length; i++)
-        {
-            if (cell.OverlapPoint(Array[i]))
-            {
-                //print(Array[i]);
-                count += 1;
-            }
-        }
-        print(count);
+        reycastObject reyObjfunc = reyObj.GetComponent<reycastObject>();
+        reyObjfunc.checkPoints(Array.Length);
+        //int count = 0;
+        //for (int i = 0; i < Array.Length; i++)
+        //{
+        //    if (cell.OverlapPoint(Array[i]))
+        //    {
+        //        //print(Array[i]);
+        //        count += 1;
+        //    }
+        //}
+        //print(count);
         
 
     }
 
 
-    //void checkPoints(int reyCount)
-    //{
-    //    float _x=0;
-    //    float _y=0;
-    //    float Angle = 360 * Mathf.Deg2Rad;
-    //    for (int i = 0; i < reyCount; i++)
-    //    {
-    //        _x = Mathf.Cos(Angle / reyCount * i)*10;
-    //        _y = Mathf.Cos(Angle / reyCount * i)*10;
-    //        print(new Vector2(_x, _y));
-    //        RaycastHit2D hit = Physics2D.Raycast(centrMass, new Vector2(_x, _y));
-    //        print(hit.collider.name);
-    //        CheckDistance(hit.point, _x, _y);
-    //    }
-    //}
+    void checkPoints(int reyCount)
+    {
+        float _x = 0;
+        float _y = 0;
+        float Angle = 360 * Mathf.Deg2Rad;
+        float distance = 0;
+        //for (int i = 0; i < 3; i++)
+        //{
+        //    _x = Mathf.Cos(Angle / reyCount * i) * 10;
+        //    _y = Mathf.Cos(Angle / reyCount * i) * 10;
 
-    //float CheckDistance(Vector2 hintpos,float _x,float _y)
-    //{
-    //    RaycastHit2D hit = Physics2D.Raycast(centrMass, new Vector2(_x, _y));
-    //    print(hit.collider.name);
-    //    return hit.distance;
-    //}
+        //    RaycastHit2D hit = Physics2D.Raycast(centrMass, Vector2.up + new Vector2(2000 * i, 2000 * i));
+        //    distance += CheckDistance(new Vector2(hit.point.x * 1.1f, hit.point.y * 1.1f), _x, _y);
+        //    RaycastHit2D hit2 = Physics2D.Raycast(centrMass, -Vector2.up - new Vector2(2000 * i, 2000 * i));
+        //    distance += CheckDistance(new Vector2(hit.point.x * 1.1f, hit.point.y * 1.1f), _x, _y);
+
+
+        //}
+        //RaycastHit2D hit = Physics2D.Raycast(centrMass, Vector2.one);
+        //distance += CheckDistance(new Vector2(hit.point.x * 1.1f, hit.point.y * 1.1f), Vector2.one);
+        //RaycastHit2D hit2 = Physics2D.Raycast(centrMass, -Vector2.one);
+        //distance += CheckDistance(new Vector2(hit2.point.x * 1.1f, hit2.point.y * 1.1f), -Vector2.one);
+        //RaycastHit2D hit3 = Physics2D.Raycast(centrMass, Vector2.up);
+        //distance += CheckDistance(new Vector2(hit3.point.x * 1.1f, hit3.point.y * 1.1f), Vector2.up);
+        //RaycastHit2D hit4 = Physics2D.Raycast(centrMass, -Vector2.up);
+        //distance += CheckDistance(new Vector2(hit3.point.x * 1.1f, hit4.point.y * 1.1f), -Vector2.up);
+        //RaycastHit2D hit5 = Physics2D.Raycast(centrMass, Vector2.left);
+        //distance += CheckDistance(new Vector2(hit5.point.x * 1.1f, hit5.point.y * 1.1f), Vector2.left);
+        //RaycastHit2D hit6 = Physics2D.Raycast(centrMass, -Vector2.left);
+        //distance += CheckDistance(new Vector2(hit6.point.x * 1.1f, hit6.point.y * 1.1f), -Vector2.left);
+        print(distance / reyCount);
+    }
+
+    float CheckDistance(Vector2 hintpos, Vector2 dir)
+    {
+        print(hintpos);
+        Instantiate(hitPoint, hintpos, Quaternion.identity);
+        RaycastHit2D hit = Physics2D.Raycast(hintpos,dir);
+        Instantiate(hitPoint, hit.point, Quaternion.identity);
+        //print(hit.collider.name);
+        return hit.distance;
+    }
     void startFigur(int kolStor)
     {
-        float _var=1f;
+        float _var=2f;
         float Angle=360;
         Angle = Angle * Mathf.Deg2Rad;
         float checkAngle=Angle/kolStor;
@@ -117,15 +121,17 @@ public class Template : MonoBehaviour
         line.SetVertexCount(kolStor+1);
         for (int i = 0; i < kolStor+1; i++)
         {
-            position[i] = new Vector2(Mathf.Cos(checkAngle * i) * _var, Mathf.Sin(checkAngle * i) * _var);
-            line.SetPosition(i, new Vector3(Mathf.Cos(checkAngle * i)*_var, Mathf.Sin(checkAngle * i)*_var, 0));
+            position[i] = new Vector2(Mathf.Cos(checkAngle * i - 30 * Mathf.Deg2Rad) * _var, Mathf.Sin(checkAngle * i - 30 * Mathf.Deg2Rad) * _var);
+            line.SetPosition(i, new Vector3(Mathf.Cos(checkAngle * i - 30 * Mathf.Deg2Rad) * _var, Mathf.Sin(checkAngle * i - 30 * Mathf.Deg2Rad) * _var, 0));
         }
 
         line.SetPosition(kolStor, position[0]);
-        coll = gameObject.AddComponent<PolygonCollider2D>();
-        coll.SetPath(0, position);        
-        centrMass = coll.bounds.center;
-        addPoligon();
+        //coll = gameObject.AddComponent<PolygonCollider2D>();
+        //coll.SetPath(0, position);        
+        //centrMass = coll.bounds.center;
+        coll = gameObject.AddComponent<EdgeCollider2D>();
+        coll.points = position;
+        //addPoligon();
         
     }
 
