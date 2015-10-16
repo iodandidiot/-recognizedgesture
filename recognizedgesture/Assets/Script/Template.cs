@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Template : MonoBehaviour
 {
@@ -15,15 +16,26 @@ public class Template : MonoBehaviour
     public int countPolig=3;
     public GameObject hitPoint;
     public GameObject reyObj;
+    public float Timer; 
+    private float TimerDown;
+    public Text colText;
     // Use this for initialization
     void Start()
     {        
-        startFigur(countPolig);
+        startFigur(Random.Range(3,6),Random.Range(0,360));
+        TimerDown = Timer;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (TimerDown > 0) TimerDown -= Time.deltaTime;
+        if (TimerDown < 0) TimerDown = 0;
+        if (TimerDown == 0)
+        {
+            //colText.gameObject.SetActive(true);
+            //colText.text = string.Format("{0}", PlayerPrefs.GetInt("KolFigure"));
+        }
         //print(coll.bounds);
     }
 
@@ -39,7 +51,8 @@ public class Template : MonoBehaviour
         poligonCentreMass = cSC.bounds.center;
         print(poligonCentreMass);
         print(centrMass);
-        Vector2 chengePos=poligonCentreMass - centrMass;        
+        //Vector2 chengePos=poligonCentreMass - centrMass;
+        Vector2 chengePos = poligonCentreMass - Vector2.zero;
         for (int i = 0; i < Array.Length; i++)
         {
             Array[i] -= chengePos;
@@ -109,7 +122,7 @@ public class Template : MonoBehaviour
         //print(hit.collider.name);
         return hit.distance;
     }
-    void startFigur(int kolStor)
+    void startFigur(int kolStor,int chAngle)
     {
         float _var=2f;
         float Angle=360;
@@ -121,17 +134,14 @@ public class Template : MonoBehaviour
         line.SetVertexCount(kolStor+1);
         for (int i = 0; i < kolStor+1; i++)
         {
-            position[i] = new Vector2(Mathf.Cos(checkAngle * i - 30 * Mathf.Deg2Rad) * _var, Mathf.Sin(checkAngle * i - 30 * Mathf.Deg2Rad) * _var);
-            line.SetPosition(i, new Vector3(Mathf.Cos(checkAngle * i - 30 * Mathf.Deg2Rad) * _var, Mathf.Sin(checkAngle * i - 30 * Mathf.Deg2Rad) * _var, 0));
+            position[i] = new Vector2(Mathf.Cos(checkAngle * i - chAngle * Mathf.Deg2Rad) * _var, Mathf.Sin(checkAngle * i - chAngle * Mathf.Deg2Rad) * _var);
+            line.SetPosition(i, new Vector3(Mathf.Cos(checkAngle * i - chAngle * Mathf.Deg2Rad) * _var, Mathf.Sin(checkAngle * i - chAngle * Mathf.Deg2Rad) * _var, 0));
         }
 
         line.SetPosition(kolStor, position[0]);
-        //coll = gameObject.AddComponent<PolygonCollider2D>();
-        //coll.SetPath(0, position);        
-        //centrMass = coll.bounds.center;
         coll = gameObject.AddComponent<EdgeCollider2D>();
         coll.points = position;
-        //addPoligon();
+
         
     }
 

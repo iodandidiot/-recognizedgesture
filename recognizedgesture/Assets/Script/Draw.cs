@@ -10,6 +10,7 @@ public class Draw : MonoBehaviour
     private LineRenderer line;
     private bool isMousePressed;
     public List<Vector2> pointsList;
+    Vector2 [] lineList;
     private Vector2 mousePos;
     public GameObject template;
     struct myLine
@@ -42,6 +43,7 @@ public class Draw : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             isMousePressed = false;
+            //AddPoligon();
             //line.SetColors(new Color(1, 0, 0), new Color(1, 0, 0, 0));
         }
         if (isMousePressed)
@@ -50,24 +52,26 @@ public class Draw : MonoBehaviour
             //mousePos.z = 0;
             if (!pointsList.Contains(mousePos))
             {
-                //if (pointsList.Count > 4) pointsList.RemoveRange(0,1);
-                pointsList.Add(mousePos);
                 
+                pointsList.Add(mousePos);
+                //pointsList.CopyTo(lineList, 1);
+                //line.SetVertexCount(lineList.Length);
+                //line.SetPosition(lineList.Length - 1, (Vector2)lineList[lineList.Length - 1]);
                 line.SetVertexCount(pointsList.Count);
                 line.SetPosition(pointsList.Count - 1, (Vector3)pointsList[pointsList.Count - 1]);
             }
-            if (isLineCollide ()) 
+            if (isLineCollide())
             {
-                    isMousePressed = false;
-                    line.SetColors (Color.red, Color.red);
-                    AddPoligon();
+                isMousePressed = false;
+                line.SetColors(Color.red, Color.red);
+                AddPoligon();
             }
         }
     }
     private bool isLineCollide ()
     {
         if (pointsList.Count < 2) return false;
-        int TotalLines = pointsList.Count - 1;
+        int TotalLines = (pointsList.Count - 1)/2;
         myLine[] lines = new myLine[TotalLines];
         if (TotalLines > 1) {
             for (int i=0; i<TotalLines; i++) {
