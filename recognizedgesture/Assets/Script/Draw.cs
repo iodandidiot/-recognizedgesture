@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
+
 
 
 public class Draw : MonoBehaviour
@@ -13,6 +15,8 @@ public class Draw : MonoBehaviour
     Vector2 [] lineList;
     private Vector2 mousePos;
     public GameObject template;
+    public Image lose;
+    public bool checkFigur = false;
     struct myLine
     {
         public Vector3 StartPoint;
@@ -27,24 +31,27 @@ public class Draw : MonoBehaviour
         line.useWorldSpace = true;
         isMousePressed = false;
         pointsList = new List<Vector2>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !checkFigur)
         {
             isMousePressed = true;
             line.SetVertexCount(0);
             pointsList.RemoveRange(0, pointsList.Count);
-            line.SetColors(new Color(1, 0, 0), Color.green);
+            line.SetColors(new Color(1, 0, 0, 0), new Color(0, 1, 0, 0.5f));
+            lose.gameObject.SetActive(false);
             
         }
         if (Input.GetMouseButtonUp(0))
         {
             isMousePressed = false;
-            //AddPoligon();
-            //line.SetColors(new Color(1, 0, 0), new Color(1, 0, 0, 0));
+            line.SetColors(Color.red, Color.red);
+            AddPoligon();
+            checkFigur = true;
         }
         if (isMousePressed)
         {
@@ -54,9 +61,6 @@ public class Draw : MonoBehaviour
             {
                 
                 pointsList.Add(mousePos);
-                //pointsList.CopyTo(lineList, 1);
-                //line.SetVertexCount(lineList.Length);
-                //line.SetPosition(lineList.Length - 1, (Vector2)lineList[lineList.Length - 1]);
                 line.SetVertexCount(pointsList.Count);
                 line.SetPosition(pointsList.Count - 1, (Vector3)pointsList[pointsList.Count - 1]);
             }
@@ -65,6 +69,7 @@ public class Draw : MonoBehaviour
                 isMousePressed = false;
                 line.SetColors(Color.red, Color.red);
                 AddPoligon();
+                checkFigur = true;
             }
         }
     }

@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class reycastObject : MonoBehaviour {
     public GameObject hitPoint;
     float distance;
     public GameObject draw;
+    public Image win;
+    public Image lose;
     public void checkPoints(int reyCount)
     {
         distance = 0;
@@ -40,8 +43,11 @@ public class reycastObject : MonoBehaviour {
 
     void notWin()
     {
-        EdgeCollider2D drawColl =draw.gameObject.GetComponent<EdgeCollider2D>();
+        EdgeCollider2D drawColl = draw.gameObject.GetComponent<EdgeCollider2D>();
         Destroy(drawColl);
+        lose.gameObject.SetActive(true);
+        Draw drawCheck=draw.GetComponent<Draw>();
+        drawCheck.checkFigur = false;
     }
 
     void Win()
@@ -51,11 +57,13 @@ public class reycastObject : MonoBehaviour {
             int kol = PlayerPrefs.GetInt("KolFigure");
             kol += 1;
             PlayerPrefs.SetInt("KolFigure", kol);
+            win.gameObject.SetActive(true);            
         }
         else
         {
             PlayerPrefs.SetInt("KolFigure", 1);
         }
         Application.LoadLevel("Game");
+
     }
 }
