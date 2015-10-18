@@ -8,11 +8,9 @@ using UnityEngine.UI;
 public class Draw : MonoBehaviour
 {
 
-    // Use this for initialization
     private LineRenderer line;
     private bool isMousePressed;
     public List<Vector2> pointsList;
-    Vector2 [] lineList;
     private Vector2 mousePos;
     public GameObject template;
     public Image lose;
@@ -34,37 +32,36 @@ public class Draw : MonoBehaviour
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !checkFigur)
+        if (Input.GetMouseButtonDown(0))
         {
             isMousePressed = true;
             line.SetVertexCount(0);
             pointsList.RemoveRange(0, pointsList.Count);
-            line.SetColors(new Color(1, 0, 0, 0), new Color(0, 1, 0, 0.5f));
+            //line.SetColors(new Color(1, 0, 0, 0), new Color(0, 1, 0, 0.5f));
+            line.SetColors(new Color(153, 153, 153, 0), new Color(0, 1, 0, 0.5f));
             lose.gameObject.SetActive(false);
             
         }
         if (Input.GetMouseButtonUp(0))
-        {
-            isMousePressed = false;
+        {            
             line.SetColors(Color.red, Color.red);
-            AddPoligon();
+            if (pointsList.Count > 25 && isMousePressed) AddPoligon();//если игрок отпустил кнопку мышки, и заданно нужное количество точек - начинаем проверку
+            isMousePressed = false;
             checkFigur = true;
         }
         if (isMousePressed)
         {
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //mousePos.z = 0;
             if (!pointsList.Contains(mousePos))
             {
                 
-                pointsList.Add(mousePos);
+                pointsList.Add(mousePos);//добавляем в массив точек точки считанные с положения курсора
                 line.SetVertexCount(pointsList.Count);
-                line.SetPosition(pointsList.Count - 1, (Vector3)pointsList[pointsList.Count - 1]);
+                line.SetPosition(pointsList.Count - 1, (Vector3)pointsList[pointsList.Count - 1]);//рисуем линии
             }
-            if (isLineCollide())
+            if (isLineCollide())//если фигура замкнута - начинаем проверку
             {
                 isMousePressed = false;
                 line.SetColors(Color.red, Color.red);
